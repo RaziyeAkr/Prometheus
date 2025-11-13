@@ -7,6 +7,14 @@ NC="\033[0m"
 BLUE="\033[0;34m"
 IP=$(hostname -I | awk '{print $1}')
 CONFIG_PATH="/etc/prometheus"
+INSTALL_DIR="/opt/prometheus"
+BIN_DIR="/usr/local/bin"
+TMP_FILE="/tmp/prometheus.tar.gz"
+LIB_PATH="/var/lib/prometheus"
+mkdir ${INSTALL_DIR}
+mkdir ${LIB_PATH}
+mkdir ${CONFIG_PATH}
+
 #pre install works
 echo -e "${BLUE}Installing JQ package for java script view.${NC}"
 dnf install jq -y  > /dev/null
@@ -20,10 +28,8 @@ sleep 5
 ##########################################
 echo -e "${RED}Create prometheus User and Dependency for prometheus.${NC}"
 useradd -r -s /sbin/nologin prometheus
-mkdir /var/lib/prometheus
-mkdir /etc/prometheus
-chown -R prometheus: /etc/prometheus
-chown -R prometheus: /var/lib/prometheus
+chown -R prometheus: ${CONFIG_PATH}
+chown -R prometheus: ${LIB_PATH}
 sleep 5
 ###########################################
 echo -e "${BLUE}Getting prometheus binary file frome github.${NC}"
@@ -31,13 +37,10 @@ LATEST=$(curl -s https://api.github.com/repos/prometheus/prometheus/releases/lat
 echo -e "${GREEN}Latest prometheus version detected: ${LATEST}${NC}"
 URL=$(curl -s https://api.github.com/repos/prometheus/prometheus/releases/latest \
   | jq -r '.assets[] | select(.name | test("linux-amd64\\.tar\\.gz$")) | .browser_download_url')
-cd /home
-mkdir prometheus/
-cd prometheus/
-wget -q --show-progress ${URL} -O prometheus.tar.gz
-tar -xzf prometheus.tar.gz
+wget -q --show-progress ${URL} -O ${INSTALL_DIR}${TMP_FILE}
+tar -xzf ${TMP_FILE} -C ${INSTALL_DIR} --strip-components=1
 cd prometheus-*
-cp prometheus promtool /usr/local/bin
+cp prometheus promtool ${BIN_DIR}
 cp -a console* $CONFIG_PATH
 sleep 5
 #########################################
