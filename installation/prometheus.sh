@@ -7,8 +7,8 @@ NC="\033[0m"
 BLUE="\033[0;34m"
 IP=$(hostname -I | awk '{print $1}')
 CONFIG_PATH="/etc/prometheus"
-INSTALL_DIR="/opt/prometheus"
 BIN_DIR="/usr/local/bin"
+ISNTALL_DIR="/opt/prometheus"
 TMP_FILE="/tmp/prometheus.tar.gz"
 LIB_PATH="/var/lib/prometheus"
 mkdir ${INSTALL_DIR}
@@ -37,7 +37,7 @@ LATEST=$(curl -s https://api.github.com/repos/prometheus/prometheus/releases/lat
 echo -e "${GREEN}Latest prometheus version detected: ${LATEST}${NC}"
 URL=$(curl -s https://api.github.com/repos/prometheus/prometheus/releases/latest \
   | jq -r '.assets[] | select(.name | test("linux-amd64\\.tar\\.gz$")) | .browser_download_url')
-wget -q --show-progress ${URL} -O ${INSTALL_DIR}${TMP_FILE}
+wget -q --show-progress ${URL} -O ${TMP_FILE}
 tar -xzf ${TMP_FILE} -C ${INSTALL_DIR} --strip-components=1
 cd prometheus-*
 cp prometheus promtool ${BIN_DIR}
