@@ -8,7 +8,7 @@ BLUE="\033[0;34m"
 IP=$(hostname -I | awk '{print $1}')
 CONFIG_PATH="/etc/prometheus"
 BIN_DIR="/usr/local/bin"
-ISNTALL_DIR="/opt/prometheus"
+INSTALL_DIR="/opt/prometheus"
 TMP_FILE="/tmp/prometheus.tar.gz"
 LIB_PATH="/var/lib/prometheus"
 mkdir ${INSTALL_DIR}
