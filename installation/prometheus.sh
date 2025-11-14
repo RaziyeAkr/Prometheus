@@ -11,9 +11,9 @@ BIN_DIR="/usr/local/bin"
 INSTALL_DIR="/opt/prometheus"
 TMP_FILE="/tmp/prometheus.tar.gz"
 LIB_PATH="/var/lib/prometheus"
-mkdir ${INSTALL_DIR}
-mkdir ${LIB_PATH}
-mkdir ${CONFIG_PATH}
+mkdir -p ${INSTALL_DIR}
+mkdir -p ${LIB_PATH}
+mkdir -p ${CONFIG_PATH}
 
 #pre install works
 echo -e "${BLUE}Installing JQ package for java script view.${NC}"
@@ -22,14 +22,12 @@ echo -e "${BLUE}Finish installing.${NC}"
 sleep 5
 echo "We need to set some works before start to manage."
 echo -e "${RED}Channging hostname and timezone${NC}."
-hostnamectl set-hostname "monitoring server"
+hostnamectl set-hostname "monitoring-server"
 timedatectl set-timezone Asia/Tehran
 sleep 5
 ##########################################
 echo -e "${RED}Create prometheus User and Dependency for prometheus.${NC}"
 useradd -r -s /sbin/nologin prometheus
-chown -R prometheus: ${CONFIG_PATH}
-chown -R prometheus: ${LIB_PATH}
 sleep 5
 ###########################################
 echo -e "${BLUE}Getting prometheus binary file frome github.${NC}"
@@ -38,11 +36,17 @@ echo -e "${GREEN}Latest prometheus version detected: ${LATEST}${NC}"
 URL=$(curl -s https://api.github.com/repos/prometheus/prometheus/releases/latest \
   | jq -r '.assets[] | select(.name | test("linux-amd64\\.tar\\.gz$")) | .browser_download_url')
 wget -q --show-progress ${URL} -O ${TMP_FILE}
+
 tar -xzf ${TMP_FILE} -C ${INSTALL_DIR} --strip-components=1
-cd prometheus-*
-cp prometheus promtool ${BIN_DIR}
-cp -a console* $CONFIG_PATH
+
+cp ${INSTALL_DIR}/prometheus ${BIN_DIR}
+cp ${INSTALL_DIR}/promtool ${BIN_DIR}
+
+cp -r ${INSTALL_DIR}/consoles ${CONFIG_PATH}
+cp -r ${INSTALL_DIR}/console_libraries ${CONFIG_PATH}
 sleep 5
+chown -R prometheus:prometheus ${CONFIG_PATH}
+chown -R prometheus:prometheus ${LIB_PATH}
 #########################################
 echo -e "${YELLOW}Writing configs in prometheus yaml.${NC}"
 tee ${CONFIG_PATH}/prometheus.yml > /dev/null << EOF
