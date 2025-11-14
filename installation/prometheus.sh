@@ -38,7 +38,6 @@ URL=$(curl -s https://api.github.com/repos/prometheus/prometheus/releases/latest
 wget -q --show-progress ${URL} -O ${TMP_FILE}
 
 tar -xzf ${TMP_FILE} -C ${INSTALL_DIR} --strip-components=1
-
 cp ${INSTALL_DIR}/prometheus ${BIN_DIR}
 cp ${INSTALL_DIR}/promtool ${BIN_DIR}
 
