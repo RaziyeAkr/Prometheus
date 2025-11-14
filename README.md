@@ -6,5 +6,5 @@ Features:<br>
 <pre> git clone https://github.com/RaziyeAkr/Prometheus.git /tmp/prometheus
   cd /tmp/prometheus/installation
   chmod +x prometheus.sh 
-  sudo ./prometheus.sh
+  bash prometheus.sh
 </pre>
